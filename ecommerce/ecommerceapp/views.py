@@ -1,8 +1,10 @@
 from django.shortcuts import render,redirect
-from ecommerceapp.models import Contact,Product,OrderUpdate,Orders
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from ecommerceapp.models import Contact,Product,OrderUpdate,Order,Cart
 from django.contrib import messages
+from django.core.paginator import Paginator,PageNotAnInteger
 from math import ceil
-
 from ecommerceapp import keys
 from django.conf import settings
 MERCHANT_KEY=keys.MK
@@ -44,52 +46,52 @@ def contact(request):
 
 def about(request):
     return render(request,"about.html")
+ 
 
-
-
-def checkout(request):
+def cart_view(request):
     if not request.user.is_authenticated:
         messages.warning(request,"Login & Try Again")
         return redirect('/auth/login')
+    else:
+        cart_items = Cart.objects.filter(user=request.user)
+        total_amount = sum([item.total_price() for item in cart_items])
 
-    if request.method=="POST":
-        items_json = request.POST.get('itemsJson', '')
-        name = request.POST.get('name', '')
-        amount = request.POST.get('amt')
-        email = request.POST.get('email', '')
-        address1 = request.POST.get('address1', '')
-        address2 = request.POST.get('address2','')
-        city = request.POST.get('city', '')
-        zip_code = request.POST.get('zip_code', '')
-        phone = request.POST.get('phone', '')
-        Order = Orders(items_json=items_json,name=name,amount=amount, email=email, address1=address1,address2=address2,city=city,zip_code=zip_code,phone=phone)
-        print(amount)
-        Order.save()
-        update = OrderUpdate(order_id=Order.order_id,update_desc="the order has been placed")
-        update.save()
-        thank = True
-# # PAYMENT INTEGRATION
-
-        id = Order.order_id
-        oid=str(id)+"ShopyCart"
-        param_dict = {
-
-            'MID':keys.MID,
-            'ORDER_ID': oid,
-            'TXN_AMOUNT': str(amount),
-            'CUST_ID': email,
-            'INDUSTRY_TYPE_ID': 'Retail',
-            'WEBSITE': 'WEBSTAGING',
-            'CHANNEL_ID': 'WEB',
-            'CALLBACK_URL': 'http://127.0.0.1:8000/handlerequest/',
-
-        }
-        param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(param_dict, MERCHANT_KEY)
-        return render(request, 'paytm.html', {'param_dict': param_dict})
-
-    return render(request, 'checkout.html')
+        return render(request, 'cart.html', {'cart_items': cart_items, 'total_amount': total_amount})
 
 
+
+def checkout_view(request):
+    if not request.user.is_authenticated:
+        messages.warning(request,"Login & Try Again")
+        return redirect('/auth/login')
+    
+    if request.method == 'POST':
+        address = request.POST.get('address')
+        phone = request.POST.get('phone')
+
+        if not address or not phone:
+            messages.error(request, "Please fill in all the details.")
+            return redirect('checkout')
+
+        cart_items = Cart.objects.filter(user=request.user)
+        if not cart_items:
+            messages.warning(request, "Your cart is empty.")
+            return redirect('cart')
+
+        # Create order
+        order = Order.objects.create(user=request.user, address=address, phone=phone)
+        order.cart.set(cart_items)
+        order.save()
+
+        # Clear the cart after placing the order
+        cart_items.delete()
+
+        messages.success(request, "Your order has been placed!")
+        return redirect('order_confirmation.html', order_id=order.id)
+
+    cart_items = Cart.objects.filter(user=request.user)
+    total_amount = sum([item.total_price() for item in cart_items])
+    return render(request, 'checkout.html', {'cart_items': cart_items, 'total_amount': total_amount})
 @csrf_exempt
 def handlerequest(request):
     # paytm will send you post request here
@@ -109,7 +111,7 @@ def handlerequest(request):
             rid=a.replace("ShopyCart","")
            
             print(rid)
-            filter2= Orders.objects.filter(order_id=rid)
+            filter2= Order.objects.filter(order_id=rid)
             print(filter2)
             print(a,b)
             for post1 in filter2:
@@ -123,38 +125,97 @@ def handlerequest(request):
             print('order was not successful because' + response_dict['RESPMSG'])
     return render(request, 'paymentstatus.html', {'response': response_dict})
 
+@login_required
+def order_details(request, order_id):
+    try:
+        # Fetch the order and its updates
+        order = Order.objects.get(id=order_id, user=request.user)
+        updates = OrderUpdate.objects.filter(order=order).order_by('-timestamp')
+    except Order.DoesNotExist:
+        messages.error(request, "Order not found.")
+        return redirect('profile')
 
+    return render(request, 'order_details.html', {'order': order, 'updates': updates})
+
+@login_required
+def update_order_status(request, order_id):
+    if request.method == 'POST':
+        update_desc = request.POST.get('update_desc')
+        order = Order.objects.get(id=order_id)
+        
+        # Create a new order update
+        OrderUpdate.objects.create(order=order, update_desc=update_desc)
+
+        messages.success(request, 'Order status updated successfully.')
+        return redirect('order_details', order_id=order_id)
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import Order, OrderUpdate  # Make sure to import your models
 
 def profile(request):
     if not request.user.is_authenticated:
         messages.warning(request, "Login & Try Again")
         return redirect('/auth/login')
 
-    currentuser = request.user.username
-    items = Orders.objects.filter(email=currentuser)
-    rid = None  # Set to None to handle missing or invalid ids
+    # Use the current user object instead of username
+    currentuser = request.user  
+    items = Order.objects.filter(user=currentuser)  # Filter by user
 
-    for i in items:
-        print(i.oid)
-        myid = i.oid
+    if not items.exists():
+        messages.info(request, "No orders found for your account.")
+        return render(request, "profile.html", {"items": items, "status": []})
 
-        # Only replace if "ShopyCart" is in the oid and ensure result is not empty
-        if "ShopyCart" in myid:
-            rid = myid.replace("ShopyCart", "").strip()  # .strip() to remove extra spaces
-            print(rid)
+    # Prepare to store order IDs and their statuses
+    order_ids = []
+    for order in items:
+        print(order.oid)
+        # Assuming oid is in the format "ShopyCart<id>"
+        rid = order.oid.replace("ShopyCart", "")
+        if rid.isdigit():  # Ensure it's a digit before converting
+            order_ids.append(int(rid))
 
-    # Check if rid is valid and non-empty before converting to int
-    if rid and rid.isdigit():
-        rid = int(rid)
-        status = OrderUpdate.objects.filter(order_id=rid)
-    else:
-        messages.error(request, "Invalid Order ID found.")
-        return redirect('/profile')  # Or another error handling mechanism
+    # Fetch status for each order ID
+    status = []
+    if order_ids:
+        status = OrderUpdate.objects.filter(order_id__in=order_ids)
 
-    for j in status:
-        print(j.update_desc)
+    # Print the updates for debugging
+    for update in status:
+        print(update.update_desc)
 
     context = {"items": items, "status": status}
     return render(request, "profile.html", context)
 
+@login_required
+def order_confirmation(request, order_id):
+    order = Order.objects.get(id=order_id, user=request.user)
+    return render(request, 'order_confirmation.html', {'order': order})
+def product_list(request):
+    products = Product.objects.all()
+    # Pagination
+    page = request.GET.get('page', 1)
+    paginator = Paginator(products, 6)
+    try:
+        products_page = paginator.page(page)
+    except PageNotAnInteger:
+        products_page = paginator.page(1)
+    except EmptyPage:
+        products_page = paginator.page(paginator.num_pages)
+    return render(request, 'product_list.html', {'products': products})
 
+def add_to_cart(request):
+    if request.method == 'POST':
+        product_id = request.POST.get('product_id')
+        quantity = int(request.POST.get('quantity', 1))
+
+        cart = request.session.get('cart', {})
+        if product_id in cart:
+            cart[product_id] += quantity
+        else:
+            cart[product_id] = quantity
+        
+        request.session['cart'] = cart
+        return JsonResponse({'message': 'Item added to cart', 'cart_count': len(cart)})
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)

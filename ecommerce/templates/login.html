@@ -1,5 +1,10 @@
 {% extends 'base.html' %} 
 {% block title %}Login{% endblock title %} 
+{% comment %} {% block content %}
+
+<h1>Auth login</h1>
+
+{% endblock content %} {% endcomment %}
 {% block content %}
 
 <div class="card bg-light p-5">
@@ -19,7 +24,7 @@
     {% csrf_token %}
     <br />
 
-    <label for="email">email</label>
+    <label for="email">Email</label>
     <div class="form-group">
       <input
         type="email"

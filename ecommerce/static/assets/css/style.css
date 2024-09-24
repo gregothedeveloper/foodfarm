@@ -1,5 +1,6 @@
+
 body {
-  font-family: "Roboto", sans-serif;
+  font-family: "Poppins", sans-serif;
   color: #444444;
 }
 
@@ -20,7 +21,7 @@ h4,
 h5,
 h6 {
   /* font-family: "Nunito", sans-serif; */
-  font-family: cursive;
+  font-family: "Poppins", sans-serif;;
 }
 
 /*--------------------------------------------------------------
@@ -111,7 +112,7 @@ h6 {
   position: relative;
 }
 
-.navbar > ul > li {
+.navbar>ul>li {
   white-space: nowrap;
   padding: 10px 0 10px 24px;
 }
@@ -138,7 +139,7 @@ h6 {
   margin-left: 5px;
 }
 
-.navbar > ul > li > a:before {
+.navbar>ul>li>a:before {
   content: "";
   position: absolute;
   width: 100%;
@@ -152,7 +153,7 @@ h6 {
 }
 
 .navbar a:hover:before,
-.navbar li:hover > a:before,
+.navbar li:hover>a:before,
 .navbar .active:before {
   visibility: visible;
   transform: scaleX(1);
@@ -161,7 +162,7 @@ h6 {
 .navbar a:hover,
 .navbar .active,
 .navbar .active:focus,
-.navbar li:hover > a {
+.navbar li:hover>a {
   color: #fff;
 }
 
@@ -197,11 +198,11 @@ h6 {
 
 .navbar .dropdown ul a:hover,
 .navbar .dropdown ul .active:hover,
-.navbar .dropdown ul li:hover > a {
+.navbar .dropdown ul li:hover>a {
   color: #e43c5c;
 }
 
-.navbar .dropdown:hover > ul {
+.navbar .dropdown:hover>ul {
   opacity: 1;
   top: 100%;
   visibility: visible;
@@ -213,7 +214,7 @@ h6 {
   visibility: hidden;
 }
 
-.navbar .dropdown .dropdown:hover > ul {
+.navbar .dropdown .dropdown:hover>ul {
   opacity: 1;
   top: 0;
   left: 100%;
@@ -225,7 +226,7 @@ h6 {
     left: -90%;
   }
 
-  .navbar .dropdown .dropdown:hover > ul {
+  .navbar .dropdown .dropdown:hover>ul {
     left: -100%;
   }
 }
@@ -283,12 +284,12 @@ h6 {
   transition: 0.3s;
 }
 
-.navbar-mobile > ul > li {
+.navbar-mobile>ul>li {
   padding: 0;
 }
 
 .navbar-mobile a:hover:before,
-.navbar-mobile li:hover > a:before,
+.navbar-mobile li:hover>a:before,
 .navbar-mobile .active:before {
   visibility: hidden;
 }
@@ -302,7 +303,7 @@ h6 {
 
 .navbar-mobile a:hover,
 .navbar-mobile .active,
-.navbar-mobile li:hover > a {
+.navbar-mobile li:hover>a {
   color: #e43c5c;
 }
 
@@ -337,11 +338,11 @@ h6 {
 
 .navbar-mobile .dropdown ul a:hover,
 .navbar-mobile .dropdown ul .active:hover,
-.navbar-mobile .dropdown ul li:hover > a {
+.navbar-mobile .dropdown ul li:hover>a {
   color: #e43c5c;
 }
 
-.navbar-mobile .dropdown > .dropdown-active {
+.navbar-mobile .dropdown>.dropdown-active {
   display: block;
 }
 
@@ -522,7 +523,7 @@ section {
   position: relative;
 }
 
-.about .content ul li + li {
+.about .content ul li+li {
   margin-top: 10px;
 }
 
@@ -540,7 +541,7 @@ section {
 }
 
 .about .content .btn-learn-more {
-  font-family: "Nunito", sans-serif;
+  font-family: "Poppins", sans-serif;
   font-weight: 600;
   font-size: 14px;
   letter-spacing: 1px;
@@ -677,8 +678,7 @@ section {
 # Cta
 --------------------------------------------------------------*/
 .cta {
-  background: linear-gradient(rgba(2, 2, 2, 0.5), rgba(0, 0, 0, 0.8)),
-    url("../img/cta-bg.jpg") center center;
+  background: linear-gradient(rgba(2, 2, 2, 0.5), rgba(0, 0, 0, 0.8)), url("../img/cta-bg.jpg") center center;
   background-size: cover;
   padding: 60px 0;
 }
@@ -694,7 +694,7 @@ section {
 }
 
 .cta .cta-btn {
-  font-family: "Nunito", sans-serif;
+  font-family: "Poppins", sans-serif;
   text-transform: uppercase;
   font-weight: 500;
   font-size: 16px;
@@ -833,10 +833,7 @@ section {
   position: relative;
 }
 
-.portfolio-details
-  .portfolio-details-slider
-  .swiper-pagination
-  .swiper-pagination-bullet {
+.portfolio-details .portfolio-details-slider .swiper-pagination .swiper-pagination-bullet {
   width: 12px;
   height: 12px;
   background-color: #fff;
@@ -844,10 +841,7 @@ section {
   border: 1px solid #e43c5c;
 }
 
-.portfolio-details
-  .portfolio-details-slider
-  .swiper-pagination
-  .swiper-pagination-bullet-active {
+.portfolio-details .portfolio-details-slider .swiper-pagination .swiper-pagination-bullet-active {
   background-color: #e43c5c;
 }
 
@@ -870,7 +864,7 @@ section {
   font-size: 15px;
 }
 
-.portfolio-details .portfolio-info ul li + li {
+.portfolio-details .portfolio-info ul li+li {
   margin-top: 10px;
 }
 
@@ -914,7 +908,7 @@ section {
   font-size: 42px;
   color: #e43c5c;
   font-weight: 500;
-  font-family: "Open Sans", sans-serif;
+  font-family: "Poppins", sans-serif;
   margin-bottom: 20px;
 }
 
@@ -967,7 +961,7 @@ section {
   color: #e43c5c;
   font-size: 14px;
   font-weight: 400;
-  font-family: "Nunito", sans-serif;
+  font-family: "Poppins", sans-serif;
   font-weight: 600;
   transition: 0.3s;
 }
@@ -1025,7 +1019,7 @@ section {
 .faq .faq-list .question {
   display: block;
   position: relative;
-  font-family: #e43c5c;
+  font-family: "Poppins", sans-serif;;
   font-size: 18px;
   line-height: 24px;
   font-weight: 400;
@@ -1229,7 +1223,7 @@ section {
   font-weight: 600;
 }
 
-.contact .php-email-form .error-message br + br {
+.contact .php-email-form .error-message br+br {
   margin-top: 25px;
 }
 
@@ -1282,7 +1276,7 @@ section {
   padding: 10px 12px;
 }
 
-.contact .php-email-form button[type="submit"] {
+.contact .php-email-form button[type=submit] {
   background: #e43c5c;
   border: 0;
   padding: 10px 28px;
@@ -1291,7 +1285,7 @@ section {
   border-radius: 50px;
 }
 
-.contact .php-email-form button[type="submit"]:hover {
+.contact .php-email-form button[type=submit]:hover {
   background: #d01d3f;
 }
 
@@ -1344,11 +1338,11 @@ section {
   font-size: 14px;
 }
 
-.breadcrumbs ol li + li {
+.breadcrumbs ol li+li {
   padding-left: 10px;
 }
 
-.breadcrumbs ol li + li::before {
+.breadcrumbs ol li+li::before {
   display: inline-block;
   padding-right: 10px;
   color: #655356;
@@ -1404,7 +1398,7 @@ section {
   margin: 0;
 }
 
-.blog .entry .entry-meta ul li + li {
+.blog .entry .entry-meta ul li+li {
   padding-left: 20px;
 }
 
@@ -1521,7 +1515,7 @@ section {
   display: inline-block;
 }
 
-.blog .entry .entry-footer .tags li + li::before {
+.blog .entry .entry-footer .tags li+li::before {
   padding-right: 6px;
   color: #6c757d;
   content: ",";
@@ -1740,7 +1734,7 @@ section {
   position: relative;
 }
 
-.blog .sidebar .search-form form input[type="text"] {
+.blog .sidebar .search-form form input[type=text] {
   border: 0;
   padding: 4px;
   border-radius: 4px;
@@ -1777,7 +1771,7 @@ section {
   padding: 0;
 }
 
-.blog .sidebar .categories ul li + li {
+.blog .sidebar .categories ul li+li {
   padding-top: 10px;
 }
 
@@ -1796,7 +1790,7 @@ section {
   font-size: 14px;
 }
 
-.blog .sidebar .recent-posts .post-item + .post-item {
+.blog .sidebar .recent-posts .post-item+.post-item {
   margin-top: 15px;
 }
 
@@ -1894,7 +1888,7 @@ section {
   font-size: 14px;
   line-height: 24px;
   margin-bottom: 0;
-  font-family: "Nunito", sans-serif;
+  font-family: "Poppins", sans-serif;
   color: #777777;
 }
 
@@ -1967,13 +1961,13 @@ section {
   border: 1px solid #f7c2cc;
 }
 
-#footer .footer-newsletter form input[type="email"] {
+#footer .footer-newsletter form input[type=email] {
   border: 0;
   padding: 4px 8px;
   width: calc(100% - 100px);
 }
 
-#footer .footer-newsletter form input[type="submit"] {
+#footer .footer-newsletter form input[type=submit] {
   position: absolute;
   top: 0;
   right: -2px;
@@ -1989,7 +1983,7 @@ section {
   box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
 }
 
-#footer .footer-newsletter form input[type="submit"]:hover {
+#footer .footer-newsletter form input[type=submit]:hover {
   background: #d01d3f;
 }
 
